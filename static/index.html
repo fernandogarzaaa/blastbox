@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Blastbox: Prove-It CSV Analyst</title>
+<style>body{font-family:system-ui,sans-serif;max-width:760px;margin:2rem auto;padding:0 1rem}textarea{width:100%;height:140px}pre{background:#111;color:#eee;padding:1rem;white-space:pre-wrap}</style>
+</head>
+<body>
+<h1>Blastbox: Prove-It CSV Analyst</h1>
+<p>Ask a question about a CSV. Code runs in a sandbox, never on this server. Every run returns a receipt: what ran, what it was allowed, and how long it took.</p>
+<label>Question <input id="q" style="width:100%" value="Total revenue per item?"></label><br><br>
+<label>CSV <textarea id="csv">item,price,qty
+coffee,350,3
+coffee,350,2
+beans,1200,1
+</textarea></label><br>
+<label>Code (leave blank to use Vultr Serverless Inference, when configured) <textarea id="code"></textarea></label><br>
+<button id="run">Run in sandbox</button>
+<button id="sample">Load sample</button>
+<button id="hostile">Load containment test</button>
+<pre id="out">Press Run.</pre>
+<script>
+const out = document.getElementById('out');
+async function post(body){
+  const r = await fetch('/api/run', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+  out.textContent = JSON.stringify(await r.json(), null, 2);
+}
+document.getElementById('run').onclick = () => post({question: q.value, csv: csv.value, code: code.value});
+document.getElementById('sample').onclick = async () => {
+  const r = await (await fetch('/api/sample')).json();
+  csv.value = r.csv; code.value = r.code;
+};
+document.getElementById('hostile').onclick = () => {
+  code.value = "import socket\nprint(socket.gethostname())\n";
+};
+</script>
+</body>
+</html>

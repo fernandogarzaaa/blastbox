@@ -1,0 +1,19 @@
+[Unit]
+Description=Blastbox Prove-It CSV Analyst
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/blastbox
+EnvironmentFile=/etc/blastbox.env
+Environment=PORT=8000
+Environment=SANDBOX_BACKEND=docker
+Environment=SANDBOX_IMAGE=blastbox-sandbox:latest
+ExecStart=/usr/bin/python3 -m app.server
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
