@@ -167,6 +167,35 @@ Pattern B.
 - Not done, not submitted: Vultr account and credit claim, VM,
   public demo URL, demo video, LabLab submission.
 
+## Day 5 status (November 7, 2026, verified)
+
+- Event brief re-read from lablab.ai: same two tracks, Blast Radius Zero
+  and Powering the Future of Work, no newly announced tracks. Window
+  unchanged at 2026-11-03T16:00Z to 2026-11-08T23:00Z. Submission needs
+  unchanged: GitHub repo, Vultr VM backend, public demo URL, recorded
+  demo video, architecture explanation, one containment moment.
+- Gmail re-checked: no mail from vultr.com since Nov 6, and no Vultr
+  verification, welcome, or billing mail. The only Vultr-related mail
+  since Nov 6 is the already-known Nov 6 LabLab onsite-attendance
+  nudge. No evidence Inan has created or signed in to a Vultr account
+  yet, so the $200 credit (promo HACKATHON) remains unredeemed and
+  unconfirmed.
+- Regression found and fixed: 1 of 16 tests failed on this run.
+  Root cause was the test, not the product: the sandbox VM gained a
+  Docker CLI binary (docker 29.1.3, daemon not running), so the
+  missing-binary test's assumption that no docker binary exists no
+  longer held and the docker-run error path returned no reason field.
+  Fixed by mocking the missing binary in the test and by adding a
+  reason to every failed docker-run receipt in app/runner.py.
+  Tests re-run: 16 pass. Local smoke test on port 8126: health ok,
+  sample analysis beans 1200 and coffee 1750 with exit code 0 in
+  36ms, hostile `import socket` blocked with reason
+  "blocked import: socket" and empty stdout.
+- STILL BLOCKED, escalated Nov 6: no Vultr account, no VM, no public
+  demo URL, no live inference, no demo video. Submission is due
+  Nov 9, 7:00 AM Manila; the build window ends Nov 8, 23:00 UTC.
+  Do not submit until VM + live Docker + live inference are verified.
+
 ## Blockers and next steps
 
 - Vultr gift code: the event page says the code is shared at

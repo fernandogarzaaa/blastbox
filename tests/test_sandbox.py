@@ -81,9 +81,12 @@ class RunnerTests(unittest.TestCase):
         self.assertNotIn("/etc", " ".join(cmd))
 
     def test_docker_backend_missing_binary_reports_error(self):
-        result = runner.run(GOOD, CSV, backend="docker")
-        # This sandbox has no docker binary, so the error path is the
-        # honest, tested result here. On the Vultr VM it proceeds.
+        from unittest import mock
+        # Mock the missing binary: the host running the tests may or may
+        # not have a docker CLI installed (this sandbox gained one), so
+        # the no-binary path is controlled here, not assumed.
+        with mock.patch.object(runner.shutil, "which", return_value=None):
+            result = runner.run(GOOD, CSV, backend="docker")
         self.assertEqual(result["status"], "error")
         self.assertIn("docker", result["reason"])
 

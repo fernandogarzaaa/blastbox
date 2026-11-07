@@ -103,10 +103,17 @@ def run(code: str, csv_text: str, timeout_s: int = DEFAULT_TIMEOUT_S,
                     env={"PATH": os.environ.get("PATH", "/usr/bin:/bin")},
                 )
                 status = "ok" if proc.returncode == 0 else "error"
-                return {**receipt_base, "status": status, "exit_code": proc.returncode,
-                        "stdout": proc.stdout[:DEFAULT_MAX_OUTPUT],
-                        "stderr": proc.stderr[:DEFAULT_MAX_OUTPUT],
-                        "duration_ms": int((time.monotonic() - started) * 1000)}
+                result = {**receipt_base, "status": status, "exit_code": proc.returncode,
+                          "stdout": proc.stdout[:DEFAULT_MAX_OUTPUT],
+                          "stderr": proc.stderr[:DEFAULT_MAX_OUTPUT],
+                          "duration_ms": int((time.monotonic() - started) * 1000)}
+                if status == "error":
+                    # Keep the receipt schema uniform: every error
+                    # result carries a reason, not just the blocked
+                    # and missing-binary paths.
+                    result["reason"] = (
+                        f"docker run failed with exit code {proc.returncode}")
+                return result
             except subprocess.TimeoutExpired:
                 return {**receipt_base, "status": "timeout", "stdout": "",
                         "stderr": "", "duration_ms": int((time.monotonic() - started) * 1000)}
